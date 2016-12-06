@@ -1,81 +1,95 @@
 package com.example.messagingapp;
 
-import android.app.Activity;
-import android.util.Pair;
+import java.util.ArrayList;
+
+import android.content.Context;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
+/**
+ * AwesomeAdapter is a Custom class to implement custom row in ListView
+ *
+ * @author Adil Soomro
+ *
+ */
+public class MessageAdapter extends BaseAdapter{
+    private Context mContext;
+    private ArrayList<Message> mMessages;
 
 
-import java.util.ArrayList;
-import java.util.List;
 
-public class MessageAdapter extends BaseAdapter {
-
-    public static final int DIRECTION_INCOMING = 0;
-    public static final int DIRECTION_OUTGOING = 1;
-
-    private List<Pair<String, Integer>> messages;
-    private LayoutInflater layoutInflater;
-
-    public MessageAdapter(Activity activity) {
-        layoutInflater = activity.getLayoutInflater();
-        messages = new ArrayList<Pair<String, Integer>>();
+    public MessageAdapter(Context context, ArrayList<Message> messages) {
+        super();
+        this.mContext = context;
+        this.mMessages = messages;
     }
-
-    public void addMessage(String message, int direction) {
-        messages.add(new Pair(message, direction));
-        notifyDataSetChanged();
-    }
-
     @Override
     public int getCount() {
-        return messages.size();
+        return mMessages.size();
     }
-
     @Override
-    public Object getItem(int i) {
-        return messages.get(i);
+    public Object getItem(int position) {
+        return mMessages.get(position);
     }
-
     @Override
-    public long getItemId(int i) {
-        return i;
-    }
+    public View getView(int position, View convertView, ViewGroup parent) {
+        Message message = (Message) this.getItem(position);
 
-    @Override
-    public int getViewTypeCount() {
-        return 2;
-    }
+        ViewHolder holder;
+        if(convertView == null)
+        {
+            holder = new ViewHolder();
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.sms_row, parent, false);
+            holder.message = (TextView) convertView.findViewById(R.id.message_text);
+            holder.name = (TextView)convertView.findViewById(R.id.name_text);
+            convertView.setTag(holder);
+        }
+        else
+            holder = (ViewHolder) convertView.getTag();
 
-    @Override
-    public int getItemViewType(int i) {
-        return messages.get(i).second;
-    }
+        holder.message.setText(message.getMessage());
+        holder.name.setText(message.getName() + ":  " + message.getTime());
 
-    @Override
-    public View getView(int i, View convertView, ViewGroup viewGroup) {
-        int direction = getItemViewType(i);
+        LayoutParams lp = (LayoutParams) holder.message.getLayoutParams();
+        LayoutParams lp1 = (LayoutParams) holder.name.getLayoutParams();
+        //check if it is a status message then remove background, and change text color.
 
-        //show message on left or right, depending on if
-        //it's incoming or outgoing
-        /**if (convertView == null) {
-            int res = 0;
-            if (direction == DIRECTION_INCOMING) {
-                res = R.layout.message_right;
-            } else if (direction == DIRECTION_OUTGOING) {
-                res = R.layout.message_left;
+            //Check whether message is mine to show green background and align to right
+            if(message.getOwner())
+            {
+                holder.message.setBackgroundResource(R.drawable.speech_bubble_green);
+                lp.gravity = Gravity.RIGHT;
+                lp1.gravity = Gravity.RIGHT;
             }
-            convertView = layoutInflater.inflate(res, viewGroup, false);
-        }**/
+            //If not mine then it is from sender to show orange background and align to left
+            else
+            {
+                holder.message.setBackgroundResource(R.drawable.speech_bubble_orange);
+                lp.gravity = Gravity.LEFT;
+                lp1.gravity = Gravity.LEFT;
+            }
+            holder.message.setLayoutParams(lp);
+            holder.message.setTextColor(R.color.textColor);
 
-        String message = messages.get(i).first;
-
-        //TextView txtMessage = (TextView) convertView.findViewById(R.id.txtMessage);
-        //txtMessage.setText(message);
+            holder.name.setLayoutParams(lp);
+            holder.name.setTextColor(R.color.textColor);
 
         return convertView;
     }
+    private static class ViewHolder
+    {
+        TextView message;
+        TextView name;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
 }
