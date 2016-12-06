@@ -5,12 +5,10 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.logging.Logger;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 
 public class Server {
@@ -168,7 +166,7 @@ public class Server {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
         }
         catch (Exception ex) {
-        	LOG.warning("Failed to register the mySQL Connector");
+	        System.out.println("SQLException: " + ex.getMessage());
         }
         
 		int port = 20000;

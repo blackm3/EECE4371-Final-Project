@@ -57,6 +57,7 @@ public class ClientConnection extends Thread {
 	public void run() {
 		//get connection to database
 	    try {
+	    	System.out.println("trying to conenct");
 	        conn =
 	           DriverManager.getConnection("jdbc:mysql://messagedb.czvzkcvchbns.us-west-2.rds.amazonaws.com:2000/mydb?" +
 	                                       "user=russelan&password=kt121nbn");
