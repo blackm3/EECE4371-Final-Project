@@ -1,0 +1,10 @@
+Matthew Black
+Alexis Russel
+
+EECE 4371 Final Project
+
+The main components of the Android client are a main activity displaying conversations, an activity for the user to send messages, and a 
+background service for networking purposes. A custom adapter will be used to help display messages in a familiar format. 
+
+The GroupCast server will be used as the backend. In addition, a MySQL AWS instance has been set up for the database storage. The GroupCast
+server will be modified to allow for interfacing with the database, which will be used to store conversations.
