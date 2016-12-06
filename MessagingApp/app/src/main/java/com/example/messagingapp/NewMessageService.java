@@ -85,10 +85,22 @@ public class NewMessageService extends Service {
                                 break;
                             }else{
                                 // will broadcast the received message
-                                String name = msg.split(",")[1];
-                                Intent broadcastIntent = new Intent("main");
-                                broadcastIntent.putExtra("message", msg);
-                                sendBroadcast(broadcastIntent);
+                                String groupName;
+                                if(msg.startsWith("+MSG,")){
+
+                                    String[] temp = msg.split(",");
+                                    groupName = temp[2].substring(1);
+                                    Log.i(LOG_TAG, groupName);
+                                    Intent broadcastIntent = new Intent(groupName);
+                                    broadcastIntent.putExtra("message", msg);
+                                    sendBroadcast(broadcastIntent);
+                                }else {
+                                    String name = msg.split(",")[1];
+                                    Intent broadcastIntent = new Intent("main");
+                                    broadcastIntent.putExtra("message", msg);
+                                    sendBroadcast(broadcastIntent);
+                                }
+
                             }
 
                         }

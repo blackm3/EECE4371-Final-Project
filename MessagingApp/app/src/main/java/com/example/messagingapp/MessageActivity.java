@@ -125,7 +125,7 @@ public class MessageActivity extends ListActivity {
             }
         };
 
-        registerReceiver(receiver, new IntentFilter(user));
+        registerReceiver(receiver, new IntentFilter(groupName));
 
 
         // internal storage of converations
