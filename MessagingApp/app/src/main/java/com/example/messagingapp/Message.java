@@ -8,12 +8,14 @@ import java.util.Date;
 public class Message {
     private String message;
     private boolean isMine;
+    public String owner;
     private String time;
 
-    public Message(String message, boolean isMine, String time){
+    public Message(String message, boolean isMine, String time, String owner){
         this.message = message;
         this.isMine = isMine;
         this.time = time;
+        this.owner = owner;
     }
 
     public String getMessage(){
@@ -26,5 +28,9 @@ public class Message {
 
     public String getTime(){
         return this.time;
+    }
+
+    public String getName() {
+        return this.owner;
     }
 }

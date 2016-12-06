@@ -46,14 +46,17 @@ public class MessageAdapter extends BaseAdapter{
             holder = new ViewHolder();
             convertView = LayoutInflater.from(mContext).inflate(R.layout.sms_row, parent, false);
             holder.message = (TextView) convertView.findViewById(R.id.message_text);
+            holder.name = (TextView)convertView.findViewById(R.id.name_text);
             convertView.setTag(holder);
         }
         else
             holder = (ViewHolder) convertView.getTag();
 
         holder.message.setText(message.getMessage());
+        holder.name.setText(message.getName() + ":  " + message.getTime());
 
         LayoutParams lp = (LayoutParams) holder.message.getLayoutParams();
+        LayoutParams lp1 = (LayoutParams) holder.name.getLayoutParams();
         //check if it is a status message then remove background, and change text color.
 
             //Check whether message is mine to show green background and align to right
@@ -61,21 +64,27 @@ public class MessageAdapter extends BaseAdapter{
             {
                 holder.message.setBackgroundResource(R.drawable.speech_bubble_green);
                 lp.gravity = Gravity.RIGHT;
+                lp1.gravity = Gravity.RIGHT;
             }
             //If not mine then it is from sender to show orange background and align to left
             else
             {
                 holder.message.setBackgroundResource(R.drawable.speech_bubble_orange);
                 lp.gravity = Gravity.LEFT;
+                lp1.gravity = Gravity.LEFT;
             }
             holder.message.setLayoutParams(lp);
             holder.message.setTextColor(R.color.textColor);
+
+            holder.name.setLayoutParams(lp);
+            holder.name.setTextColor(R.color.textColor);
 
         return convertView;
     }
     private static class ViewHolder
     {
         TextView message;
+        TextView name;
     }
 
     @Override

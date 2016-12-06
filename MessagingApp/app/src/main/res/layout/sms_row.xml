@@ -16,5 +16,10 @@
         android:text="Medium Text"
         android:textColor="@color/textColor"
         android:textSize="20sp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/name_text"
+        android:textColor="@color/textColor"/>
 
 </LinearLayout>

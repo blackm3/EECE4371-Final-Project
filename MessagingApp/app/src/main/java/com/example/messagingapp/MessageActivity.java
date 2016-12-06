@@ -60,9 +60,10 @@ public class MessageActivity extends ListActivity {
                 EditText e = (EditText) findViewById(R.id.msgText);
                 Log.i("message_activity", e.getText().toString());
                 sendMessage(new Message(
-                        e.getText().toString(), true,
-                        new SimpleDateFormat("HH:mm:ss").format(new Date())
-                ));
+                                e.getText().toString(), true,
+                                new SimpleDateFormat("HH:mm:ss").format(new Date()),
+                                user)
+                );
                 e.setText("");
             }
         });
@@ -85,15 +86,7 @@ public class MessageActivity extends ListActivity {
         bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
 
 
-
-
-        this.setTitle("SPORTS");
         messages = new ArrayList<Message>();
-
-        messages.add(new Message("Hello", false, new SimpleDateFormat("HH:mm:ss").format(new Date())));
-        messages.add(new Message("Hi!", true, new SimpleDateFormat("HH:mm:ss").format(new Date())));
-
-        messages.add(new Message("Wassup??", false, new SimpleDateFormat("HH:mm:ss").format(new Date())));
 
 
         adapter = new MessageAdapter(this, messages);
@@ -118,7 +111,7 @@ public class MessageActivity extends ListActivity {
                     if(!sender.equals(user)){ // will handle own message when sending it
                         Log.i("message_activity", "adding message");
                         addNewMessage(new Message(msg, false,
-                                new SimpleDateFormat("HH:mm:ss").format(new Date())));
+                                new SimpleDateFormat("HH:mm:ss").format(new Date()), sender));
                     }
 
                 }
