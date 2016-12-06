@@ -8,6 +8,10 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.logging.Logger;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 
 public class Server {
 
@@ -21,6 +25,7 @@ public class Server {
 	
 	public void start(int port) {
 
+		//on start, load the database into clients and groups
 		try {
 			ss = new ServerSocket(port);
 			LOG.info(this.toString()+" started");
@@ -159,6 +164,13 @@ public class Server {
 	}
 
 	public static void main(String[] args) {
+        try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+        }
+        catch (Exception ex) {
+        	LOG.warning("Failed to register the mySQL Connector");
+        }
+        
 		int port = 20000;
 		
 		// make sure printstream is printing CRLF for newline
