@@ -57,7 +57,7 @@ public class MessageActivity extends ListActivity {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(view.getContext(), "Im Clicked!", Toast.LENGTH_SHORT).show();
+
 
                 // get user text
                 EditText e = (EditText) findViewById(R.id.msgText);

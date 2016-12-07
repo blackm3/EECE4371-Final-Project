@@ -22,7 +22,7 @@ public class NewMessageService extends Service {
 
     // server to connect to
     protected static final int GROUPCAST_PORT = 20000;
-    protected static final String GROUPCAST_SERVER = "10.32.143.216"; // public IP address
+    protected static final String GROUPCAST_SERVER = "35.164.171.94"; // public IP address
 
     // networking
     Socket socket = null;

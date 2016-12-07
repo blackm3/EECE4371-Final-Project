@@ -103,7 +103,7 @@ public class MainActivity extends Activity {
         start.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 String groupName = text.getText().toString();
-
+                text.setText("");
 
                 Log.i("main", mClientName);
 
@@ -134,9 +134,9 @@ public class MainActivity extends Activity {
                 String name = (String) listView.getItemAtPosition(position);
 
                 // Show Alert
-                Toast.makeText(getApplicationContext(),
+                /*Toast.makeText(getApplicationContext(),
                         "Position :" + itemPosition + "  ListItem : " + name, Toast.LENGTH_SHORT)
-                        .show();
+                        .show();*/
 
                 Intent intent = new Intent(getApplicationContext(), MessageActivity.class);
 
