@@ -37,6 +37,7 @@ public class ClientConnection extends Thread {
 
 
 	public ClientConnection(Server server, Socket cs) throws IOException {
+		LOG.info("client connection instantiated");
 		this.server = server;
 		this.cs = cs;
 		this.in = new BufferedReader(new InputStreamReader(cs.getInputStream()));
@@ -57,12 +58,10 @@ public class ClientConnection extends Thread {
 	public void run() {
 		//get connection to database
 	    try {
-	    	System.out.println("trying to conenct");
 	        conn =
 	           DriverManager.getConnection("jdbc:mysql://messagedb.czvzkcvchbns.us-west-2.rds.amazonaws.com:2000/mydb?" +
 	                                       "user=russelan&password=kt121nbn");
 		    
-		    //create the table, want to do this on mysql command tools but struggling to connect through that
 	        String sql = "CREATE TABLE messages " +
 	                "(time TIMESTAMP, " +
 	                " from STRING, " + 
@@ -71,6 +70,7 @@ public class ClientConnection extends Thread {
 	                " PRIMARY KEY ( time ))";
 		    stmt = conn.createStatement();
 		    stmt.executeUpdate(sql);
+		    LOG.info("connected to db and table created");
 	    }
 	    catch (SQLException ex) {
 	        System.out.println("SQLException: " + ex.getMessage());
@@ -240,6 +240,7 @@ public class ClientConnection extends Thread {
 					// if group didn't already exist, add it to db, members = client name
 					// if it did exist, add client name to members
 					else if ("JOIN".equalsIgnoreCase(cmd)) {
+						System.out.println("join was sent to server");
 
 						if (this.name == null) {
 							sendMsg(STATUS_ERROR, "JOIN: name not set");
@@ -391,6 +392,29 @@ public class ClientConnection extends Thread {
 							}
 
 						}
+					}
+					
+					// handle DB
+					else if ("DB".equalsIgnoreCase(cmd)) {
+						String group = tokens[1];
+						String msgs = "";
+						if (group != null) {
+							try {
+								PreparedStatement ps = conn.prepareStatement("SELECT * FROM `messages`" +
+								"WHERE group =?");
+								ps.setString(1, group);
+								if (ps.execute()) {
+									
+								}
+							}
+							catch (SQLException ex) {
+								// handle any errors
+								System.out.println("SQLException: " + ex.getMessage());
+								System.out.println("SQLState: " + ex.getSQLState());
+								System.out.println("VendorError: " + ex.getErrorCode());
+							}
+						}
+						sendMsg(STATUS_OK, msgs);
 					}
 
 					else {

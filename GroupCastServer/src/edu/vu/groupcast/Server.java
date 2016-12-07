@@ -22,8 +22,6 @@ public class Server {
 	HashMap<String, Group> groups = new HashMap<String, Group>();
 	
 	public void start(int port) {
-
-		//on start, load the database into clients and groups
 		try {
 			ss = new ServerSocket(port);
 			LOG.info(this.toString()+" started");
@@ -162,8 +160,9 @@ public class Server {
 	}
 
 	public static void main(String[] args) {
-        try {
+		try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
+            System.out.println("driver class instantiated");
         }
         catch (Exception ex) {
 	        System.out.println("SQLException: " + ex.getMessage());
