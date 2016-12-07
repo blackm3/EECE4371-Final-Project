@@ -2,14 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    android:orientation="vertical" >
-
     <LinearLayout
         android:id="@+id/bottom_write_bar"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@drawable/message_bar" >
+
 
         <EditText
             android:id="@+id/msgText"
@@ -34,8 +33,8 @@
             android:text="Send"
             android:textColor="#FFF"
             android:id="@+id/sendButton"/>
-    </LinearLayout>
 
+    </LinearLayout>
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -49,7 +48,7 @@
 
         <ListView
             android:layout_width="match_parent"
-            android:layout_height="509dp"
+            android:layout_height="wrap_content"
             android:id="@android:id/list"
             android:paddingTop="10sp"/>
     </LinearLayout>

@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import java.io.File;
@@ -56,6 +57,8 @@ public class MessageActivity extends ListActivity {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Toast.makeText(view.getContext(), "Im Clicked!", Toast.LENGTH_SHORT).show();
+
                 // get user text
                 EditText e = (EditText) findViewById(R.id.msgText);
                 Log.i("message_activity", e.getText().toString());
