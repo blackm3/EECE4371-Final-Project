@@ -1,1 +1,25 @@
 Messaging App
+
+
+Instructions:
+This App can be run on an emulator or mobile device with a target API level of 25. A username must be supplied by the user at which point 
+they will be asked to enter a groupname. You usually must wait a second or two before entering a groupname as the network connection is 
+being initiated here. Entering a groupname will have the user join that group or create it on the GroupCast server if 
+it does not exist. Once in a group, messages can be sent to and received from any other user in that group. Green messages indicate they 
+are owned by the user and are on the right side of the screen. Orange messages were sent from different users. The server is currently 
+deployed on an AWS EC2 instance. The public IP address is 35.164.171.94 which is already supplied to the client.
+
+Android Client
+The Android client communicates to the modified GroupCast server via a TCP connection. All of the networking is done in a Service, which 
+must be able to communicate with various components. A Login Activity is the first that the user experiences. It takes a username as input 
+and then starts the Main Activity with the username added as an extra. The Main Activity displays the groups that the user is a part of and
+also allows for new groups to be joined / created. Once the user is in a group, clicking on it in the list will launch a new Message - 
+Activity. Each conversation gets its own activity. These activities are able to communicate with the networking service by subscribing to 
+it and also by registering to receive broadcasts. The main activity starts the networking activity and each spawned message activity binds
+to it. Once the service is bound to an activity, the activity can receive and instance of it via a binder and call its public methods. This
+is used to send messages to the server. When messages are received, the service sends out a broadcast with an action corresponding to the
+name of the group. This ensures that only the intended group will receive the message. Messages are displayed in the message activity 
+according to who sent them. Messages that the user sends are shown in green and placed on the right side of the screen while messages from
+other users are placed on the left and shown in orange. Below each message is a timestamp as well as the name of the sender. A Message 
+class was created to capture all of this information and facilitate displaying it. A custom adapter was used to place the messages
+correctly in the ListView.
