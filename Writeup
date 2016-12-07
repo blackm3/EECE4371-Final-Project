@@ -16,10 +16,26 @@ and then starts the Main Activity with the username added as an extra. The Main 
 also allows for new groups to be joined / created. Once the user is in a group, clicking on it in the list will launch a new Message - 
 Activity. Each conversation gets its own activity. These activities are able to communicate with the networking service by subscribing to 
 it and also by registering to receive broadcasts. The main activity starts the networking activity and each spawned message activity binds
-to it. Once the service is bound to an activity, the activity can receive and instance of it via a binder and call its public methods. This
+to it. Once the service is bound to an activity, the activity can receive an instance of it via a binder and call its public methods. This
 is used to send messages to the server. When messages are received, the service sends out a broadcast with an action corresponding to the
 name of the group. This ensures that only the intended group will receive the message. Messages are displayed in the message activity 
 according to who sent them. Messages that the user sends are shown in green and placed on the right side of the screen while messages from
 other users are placed on the left and shown in orange. Below each message is a timestamp as well as the name of the sender. A Message 
 class was created to capture all of this information and facilitate displaying it. A custom adapter was used to place the messages
 correctly in the ListView.
+
+GroupCast Server
+The GroupCast Server was modified so that an instance of a MySQL database could be integrated and used to store message history. The
+database instance is running through AWS DBS as a MySQL server. The server connects to the database using the Connector/J JDBC driver. This
+works by obtaining a Connection instance from the DriverManager and then using this to create Statement objects. These Statement objects
+can then be used to execute SQL query strings. A query is executed at the beginning of the ClientConnection’s run method that creates a table.
+This table has columns for time, from, message, and group. The time is the primary key and is the timestamp at the time that the message is sent.
+The from column stores the client’s name that sends the message, the message is the body of what was sent and the group is the group name, or
+“address” that the message was sent to. When the server receives a MSG request and parses the request, it then inserts that information into
+the database. A “DB” request handler was added that takes one argument, which is the group name that the client wants the message history for.
+A query selects all of the message history from that group ordered by timestamp and sends this in string form back to the client through the
+TCP connection. It gets this data using a ResultSet, which is a JDBC data structure, and then turning the string format of these results into
+a more parsing friendly string. It starts with the group name and then has time, message, and sender for all of the messages, all separated by
+commas. This is in order to align with the conventions of all other GroupCast Server responses. The client can then use this response to
+render the message history on the screen so that when clients leave the message screen to go back to the list of groups screen, they can still
+come back and see the history of that group.
