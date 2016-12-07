@@ -5,8 +5,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.logging.Logger;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.sql.Timestamp;
 
 public class ClientConnection extends Thread {
 
@@ -23,8 +30,14 @@ public class ClientConnection extends Thread {
 	boolean running;
 	PrintStream out;
 	BufferedReader in;
+    Connection conn = null;
+    Statement stmt = null;
+    ResultSet rs = null;
+
+
 
 	public ClientConnection(Server server, Socket cs) throws IOException {
+		LOG.info("client connection instantiated");
 		this.server = server;
 		this.cs = cs;
 		this.in = new BufferedReader(new InputStreamReader(cs.getInputStream()));
@@ -43,7 +56,30 @@ public class ClientConnection extends Thread {
 
 	@Override
 	public void run() {
+		//get connection to database
+	    try {
+	        conn =
+	           DriverManager.getConnection("jdbc:mysql://messagedb.czvzkcvchbns.us-west-2.rds.amazonaws.com:2000/mydb?" +
+	                                       "user=russelan&password=kt121nbn");
+		    
+	        String sql = "CREATE TABLE messages " +
+	                "(time TIMESTAMP, " +
+	                " from STRING, " + 
+	                " message STRING, " + 
+	                " group STRING, " + 
+	                " PRIMARY KEY ( time ))";
+		    stmt = conn.createStatement();
+		    stmt.executeUpdate(sql);
+		    LOG.info("connected to db and table created");
+	    }
+	    catch (SQLException ex) {
+	        System.out.println("SQLException: " + ex.getMessage());
+	        System.out.println("SQLState: " + ex.getSQLState());
+	        System.out.println("VendorError: " + ex.getErrorCode());
+	    }
+	    
 		running = true;
+		
 		try {
 //			sendMsg(STATUS_OK, server.toString());
 
@@ -201,7 +237,10 @@ public class ClientConnection extends Thread {
 					}
 
 					// handle JOIN
+					// if group didn't already exist, add it to db, members = client name
+					// if it did exist, add client name to members
 					else if ("JOIN".equalsIgnoreCase(cmd)) {
+						System.out.println("join was sent to server");
 
 						if (this.name == null) {
 							sendMsg(STATUS_ERROR, "JOIN: name not set");
@@ -219,7 +258,6 @@ public class ClientConnection extends Thread {
 							String groupName = tokens[1];
 
 							try {
-
 								int maxMembers = 0;
 								if (tokens.length > 2) {
 									maxMembers = Integer.parseInt(tokens[2]);
@@ -263,6 +301,8 @@ public class ClientConnection extends Thread {
 					}
 
 					// handle MSG
+					// group name, members, list of messages in order
+					// if only to one client group name = address
 					else if ("MSG".equalsIgnoreCase(cmd)) {
 
 						if (this.name == null) {
@@ -290,6 +330,24 @@ public class ClientConnection extends Thread {
 								sb.deleteCharAt(sb.length()-1);
 
 							String body = sb.toString();
+							
+							try {
+								java.util.Date date = new java.util.Date();
+								Timestamp ts = new Timestamp(date.getTime());
+								PreparedStatement ps = conn.prepareStatement("INSERT INTO `messages` (time,from,message,group)" +
+															"VALUE (?,?,?,?)");
+								ps.setTimestamp(1, ts );
+								ps.setString(2, this.name);
+								ps.setString(3, body);
+								ps.setString(4, address);
+								ps.executeUpdate();
+							}
+							catch (SQLException ex) {
+							    // handle any errors
+							    System.out.println("SQLException: " + ex.getMessage());
+							    System.out.println("SQLState: " + ex.getSQLState());
+							    System.out.println("VendorError: " + ex.getErrorCode());
+							}
 
 							HashSet<ClientConnection> dsts = new HashSet<ClientConnection>();
 							Group g = server.getGroupByName(address);
@@ -334,6 +392,29 @@ public class ClientConnection extends Thread {
 							}
 
 						}
+					}
+					
+					// handle DB
+					else if ("DB".equalsIgnoreCase(cmd)) {
+						String group = tokens[1];
+						String msgs = "";
+						if (group != null) {
+							try {
+								PreparedStatement ps = conn.prepareStatement("SELECT * FROM `messages`" +
+								"WHERE group =?");
+								ps.setString(1, group);
+								if (ps.execute()) {
+									
+								}
+							}
+							catch (SQLException ex) {
+								// handle any errors
+								System.out.println("SQLException: " + ex.getMessage());
+								System.out.println("SQLState: " + ex.getSQLState());
+								System.out.println("VendorError: " + ex.getErrorCode());
+							}
+						}
+						sendMsg(STATUS_OK, msgs);
 					}
 
 					else {

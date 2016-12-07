@@ -5,9 +5,11 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.logging.Logger;
+
 
 public class Server {
 
@@ -20,7 +22,6 @@ public class Server {
 	HashMap<String, Group> groups = new HashMap<String, Group>();
 	
 	public void start(int port) {
-
 		try {
 			ss = new ServerSocket(port);
 			LOG.info(this.toString()+" started");
@@ -159,6 +160,14 @@ public class Server {
 	}
 
 	public static void main(String[] args) {
+		try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            System.out.println("driver class instantiated");
+        }
+        catch (Exception ex) {
+	        System.out.println("SQLException: " + ex.getMessage());
+        }
+        
 		int port = 20000;
 		
 		// make sure printstream is printing CRLF for newline
