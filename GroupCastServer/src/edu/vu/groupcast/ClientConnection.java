@@ -126,7 +126,7 @@ public class ClientConnection extends Thread {
 
 					// handle NAME
 					else if ("NAME".equalsIgnoreCase(cmd)) {
-
+						LOG.info("name set");
 						if (this.name != null) {
 							sendMsg(STATUS_ERROR, "NAME: already set");
 						}
@@ -240,7 +240,7 @@ public class ClientConnection extends Thread {
 					// if group didn't already exist, add it to db, members = client name
 					// if it did exist, add client name to members
 					else if ("JOIN".equalsIgnoreCase(cmd)) {
-						System.out.println("join was sent to server");
+						LOG.info("received join");
 
 						if (this.name == null) {
 							sendMsg(STATUS_ERROR, "JOIN: name not set");
@@ -304,6 +304,7 @@ public class ClientConnection extends Thread {
 					// group name, members, list of messages in order
 					// if only to one client group name = address
 					else if ("MSG".equalsIgnoreCase(cmd)) {
+						LOG.info("received msg");
 
 						if (this.name == null) {
 							sendMsg(STATUS_ERROR, "MSG: name not set");
@@ -400,12 +401,18 @@ public class ClientConnection extends Thread {
 						String msgs = "";
 						if (group != null) {
 							try {
-								PreparedStatement ps = conn.prepareStatement("SELECT * FROM `messages`" +
-								"WHERE group =?");
-								ps.setString(1, group);
-								if (ps.execute()) {
-									
-								}
+							    stmt = conn.createStatement();
+							    String query = "SELECT * FROM `messages` WHERE group = `group`";
+							    rs = stmt.executeQuery(query);
+						        while (rs.next()) {
+						            msgs = msgs + rs.getTimestamp("time")
+						            + "," + rs.getString("from")
+						            + "," + rs.getString("message")
+						            + ",";
+						        }
+						        if  (msgs.length() > 0) {
+						        	msgs = msgs.substring(0, msgs.length() - 2);
+						        }
 							}
 							catch (SQLException ex) {
 								// handle any errors
